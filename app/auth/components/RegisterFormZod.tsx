@@ -32,8 +32,11 @@ export default function RegisterFormZod() {
   const inputStyle =
     "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5]";
 
-  const selectStyle = inputStyle + " appearance-none";
-  const dateStyle = inputStyle + " text-gray-700";
+  const dateStyle =
+    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5] appearance-none !text-gray-700";
+
+  const selectStyle =
+    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5] appearance-none !text-gray-700";
 
   return (
     <div className="h-screen flex overflow-hidden bg-[#F5F6FA]">
@@ -122,7 +125,7 @@ export default function RegisterFormZod() {
             />
             <p className="text-xs text-red-500">{errors.email?.message}</p>
 
-            {/* DOB FIXED (GRAY STYLE) */}
+            {/* DOB FIX (FORCED TEXT COLOR) */}
             <input
               type="date"
               {...register("dob")}
@@ -130,7 +133,7 @@ export default function RegisterFormZod() {
             />
             <p className="text-xs text-red-500">{errors.dob?.message}</p>
 
-            {/* GENDER FIXED (GRAY STYLE) */}
+            {/* GENDER FIX (FORCED TEXT COLOR) */}
             <select
               {...register("gender")}
               className={selectStyle}
