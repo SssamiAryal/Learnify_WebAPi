@@ -24,26 +24,25 @@ export default function RegisterFormZod() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: RegisterType) => {
-    console.log(data);
+  const onSubmit = () => {
     setShowPopup(true);
   };
 
-  const inputStyle =
-    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5]";
+  const baseStyle =
+    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5]";
 
   const dateStyle =
-    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5] appearance-none !text-gray-700";
+    baseStyle +
+    " appearance-none text-gray-900 [color-scheme:light]";
 
   const selectStyle =
-    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5] appearance-none !text-gray-700";
+    baseStyle +
+    " appearance-none text-gray-900";
 
   return (
     <div className="h-screen flex overflow-hidden bg-[#F5F6FA]">
 
-      {/* LEFT SIDE */}
       <div className="hidden lg:flex w-[58%] items-center justify-center bg-[#5B3DF5] px-14">
-
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
@@ -55,31 +54,21 @@ export default function RegisterFormZod() {
           </h1>
 
           <div className="bg-white/10 backdrop-blur-md rounded-3xl p-5 shadow-xl space-y-4">
-
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              whileHover={{ scale: 1.02 }}
-              className="overflow-hidden rounded-2xl"
-            >
-              <Image
-                src="/assets/images/register_image.png"
-                alt="Register"
-                width={260}
-                height={260}
-                className="w-full h-auto object-cover rounded-2xl"
-              />
-            </motion.div>
+            <Image
+              src="/assets/images/register_image.png"
+              alt="Register"
+              width={260}
+              height={260}
+              className="w-full h-auto object-cover rounded-2xl"
+            />
 
             <p className="text-sm text-white/90 leading-relaxed">
               Join Learnify and start building structured learning habits with a modern experience.
             </p>
-
           </div>
         </motion.div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="w-full lg:w-[42%] flex items-center justify-center px-6">
 
         <motion.div
@@ -88,18 +77,16 @@ export default function RegisterFormZod() {
           className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-8 py-8 relative"
         >
 
-          {/* LOGO */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Image
               src="/assets/images/learnify.png"
               alt="Learnify"
               width={120}
-              height={500}
+              height={120}
               className="rounded-xl drop-shadow-md"
             />
           </div>
 
-          {/* HEADER */}
           <h2 className="text-xl font-semibold text-center text-gray-900 mt-10">
             Create Account
           </h2>
@@ -108,35 +95,26 @@ export default function RegisterFormZod() {
             Join Learnify today
           </p>
 
-          {/* FORM */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
 
-            <input
-              {...register("fullName")}
-              placeholder="Full Name"
-              className={inputStyle}
-            />
+            <input {...register("fullName")} placeholder="Full Name" className={baseStyle} />
             <p className="text-xs text-red-500">{errors.fullName?.message}</p>
 
-            <input
-              {...register("email")}
-              placeholder="Email Address"
-              className={inputStyle}
-            />
+            <input {...register("email")} placeholder="Email Address" className={baseStyle} />
             <p className="text-xs text-red-500">{errors.email?.message}</p>
 
-            {/* DOB FIX (FORCED TEXT COLOR) */}
             <input
               type="date"
               {...register("dob")}
               className={dateStyle}
+              style={{ color: "#111827" }}
             />
             <p className="text-xs text-red-500">{errors.dob?.message}</p>
 
-            {/* GENDER FIX (FORCED TEXT COLOR) */}
             <select
               {...register("gender")}
               className={selectStyle}
+              style={{ color: "#111827" }}
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -145,23 +123,11 @@ export default function RegisterFormZod() {
             </select>
             <p className="text-xs text-red-500">{errors.gender?.message}</p>
 
-            <input
-              type="password"
-              {...register("password")}
-              placeholder="Password"
-              className={inputStyle}
-            />
+            <input type="password" {...register("password")} placeholder="Password" className={baseStyle} />
             <p className="text-xs text-red-500">{errors.password?.message}</p>
 
-            <input
-              type="password"
-              {...register("confirmPassword")}
-              placeholder="Confirm Password"
-              className={inputStyle}
-            />
-            <p className="text-xs text-red-500">
-              {errors.confirmPassword?.message}
-            </p>
+            <input type="password" {...register("confirmPassword")} placeholder="Confirm Password" className={baseStyle} />
+            <p className="text-xs text-red-500">{errors.confirmPassword?.message}</p>
 
             <div className="flex items-center gap-2 text-xs text-gray-600">
               <input type="checkbox" />
@@ -176,7 +142,6 @@ export default function RegisterFormZod() {
             </button>
           </form>
 
-          {/* LOGIN */}
           <p className="text-center text-xs text-gray-500 mt-4">
             Already have an account?{" "}
             <Link href="/auth/login" className="text-[#5B3DF5] font-medium">
@@ -187,7 +152,6 @@ export default function RegisterFormZod() {
         </motion.div>
       </div>
 
-      {/* POPUP */}
       <AnimatePresence>
         {showPopup && (
           <motion.div
