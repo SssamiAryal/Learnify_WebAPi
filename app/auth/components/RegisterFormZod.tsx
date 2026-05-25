@@ -30,7 +30,10 @@ export default function RegisterFormZod() {
   };
 
   const inputStyle =
-    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-black text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5]";
+    "w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-[#5B3DF5]";
+
+  const selectStyle = inputStyle + " appearance-none";
+  const dateStyle = inputStyle + " text-gray-700";
 
   return (
     <div className="h-screen flex overflow-hidden bg-[#F5F6FA]">
@@ -82,7 +85,7 @@ export default function RegisterFormZod() {
           className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-8 py-8 relative"
         >
 
-          {/* LOGO (moved slightly down) */}
+          {/* LOGO */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Image
               src="/assets/images/learnify.png"
@@ -105,16 +108,33 @@ export default function RegisterFormZod() {
           {/* FORM */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
 
-            <input {...register("fullName")} placeholder="Full Name" className={inputStyle} />
+            <input
+              {...register("fullName")}
+              placeholder="Full Name"
+              className={inputStyle}
+            />
             <p className="text-xs text-red-500">{errors.fullName?.message}</p>
 
-            <input {...register("email")} placeholder="Email Address" className={inputStyle} />
+            <input
+              {...register("email")}
+              placeholder="Email Address"
+              className={inputStyle}
+            />
             <p className="text-xs text-red-500">{errors.email?.message}</p>
 
-            <input type="date" {...register("dob")} className={inputStyle} />
+            {/* DOB FIXED (GRAY STYLE) */}
+            <input
+              type="date"
+              {...register("dob")}
+              className={dateStyle}
+            />
             <p className="text-xs text-red-500">{errors.dob?.message}</p>
 
-            <select {...register("gender")} className={inputStyle}>
+            {/* GENDER FIXED (GRAY STYLE) */}
+            <select
+              {...register("gender")}
+              className={selectStyle}
+            >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -122,11 +142,23 @@ export default function RegisterFormZod() {
             </select>
             <p className="text-xs text-red-500">{errors.gender?.message}</p>
 
-            <input type="password" {...register("password")} placeholder="Password" className={inputStyle} />
+            <input
+              type="password"
+              {...register("password")}
+              placeholder="Password"
+              className={inputStyle}
+            />
             <p className="text-xs text-red-500">{errors.password?.message}</p>
 
-            <input type="password" {...register("confirmPassword")} placeholder="Confirm Password" className={inputStyle} />
-            <p className="text-xs text-red-500">{errors.confirmPassword?.message}</p>
+            <input
+              type="password"
+              {...register("confirmPassword")}
+              placeholder="Confirm Password"
+              className={inputStyle}
+            />
+            <p className="text-xs text-red-500">
+              {errors.confirmPassword?.message}
+            </p>
 
             <div className="flex items-center gap-2 text-xs text-gray-600">
               <input type="checkbox" />
