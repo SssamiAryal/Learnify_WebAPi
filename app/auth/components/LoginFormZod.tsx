@@ -23,6 +23,8 @@ export default function LoginFormZod() {
     console.log(data);
   };
 
+  const words = ["Learn.", "Grow.", "Succeed."];
+
   return (
     <div className="min-h-screen flex bg-[#F5F6FA]">
 
@@ -36,10 +38,25 @@ export default function LoginFormZod() {
           className="max-w-lg text-center text-white space-y-8"
         >
 
-          <h1 className="text-4xl font-semibold tracking-tight">
-            Learn. Grow. Succeed.
+          {/* CONTINUOUS ANIMATED TEXT (WAVE) */}
+          <h1 className="text-4xl font-semibold tracking-tight flex justify-center gap-2">
+            {words.map((word, i) => (
+              <motion.span
+                key={i}
+                animate={{ y: [0, -6, 0] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: i * 0.2,
+                }}
+              >
+                {word}
+              </motion.span>
+            ))}
           </h1>
 
+          {/* IMAGE CARD */}
           <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl space-y-5">
 
             <motion.div
@@ -67,7 +84,7 @@ export default function LoginFormZod() {
         </motion.div>
       </div>
 
-      {/* RIGHT SIDE (UPDATED CLEAN FORM) */}
+      {/* RIGHT SIDE */}
       <div className="w-full lg:w-[42%] flex items-center justify-center px-6">
 
         <motion.div
@@ -77,7 +94,7 @@ export default function LoginFormZod() {
           className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-10 py-14 relative"
         >
 
-          {/* LOGO (NO BACKGROUND BOX NOW) */}
+          {/* LOGO */}
           <div className="absolute -top-5 left-1/2 -translate-x-1/2">
             <motion.div
               initial={{ scale: 0 }}
@@ -89,7 +106,7 @@ export default function LoginFormZod() {
                 src="/assets/images/learnify.png"
                 alt="Learnify"
                 width={120}
-                height={500}
+                height={120}
                 className="rounded-xl drop-shadow-md"
               />
             </motion.div>
@@ -160,17 +177,8 @@ export default function LoginFormZod() {
             </button>
           </form>
 
-          {/* DIVIDER */}
-          <div className="flex items-center my-6">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="px-3 text-xs text-gray-400">
-              OR CONTINUE WITH
-            </span>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-
           {/* SOCIAL */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 mt-6">
             <button className="flex-1 flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
               <Image src="/assets/images/google.png" width={18} height={18} alt="Google" />
               Google
