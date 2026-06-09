@@ -7,10 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "./schema";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { loginUser } from "@/lib/actions/auth-action";
+import { useRouter } from "next/navigation";
 
 type LoginType = z.infer<typeof loginSchema>;
 
 export default function LoginFormZod() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -19,26 +23,28 @@ export default function LoginFormZod() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginType) => {
-    console.log(data);
+  const onSubmit = async (data: LoginType) => {
+    const result = await loginUser(data);
+
+    if (result.success) {
+      alert("Login Successful");
+      router.push("/dashboard");
+    } else {
+      alert(result.message);
+    }
   };
 
   const words = ["Learn.", "Grow.", "Succeed."];
 
   return (
     <div className="min-h-screen flex bg-[#F5F6FA]">
-
-      {/* LEFT SIDE */}
       <div className="hidden lg:flex w-[58%] items-center justify-center bg-[#5B3DF5] px-16">
-
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-lg text-center text-white space-y-8"
         >
-
-          {/* CONTINUOUS ANIMATED TEXT (WAVE) */}
           <h1 className="text-4xl font-semibold tracking-tight flex justify-center gap-2">
             {words.map((word, i) => (
               <motion.span
@@ -56,9 +62,7 @@ export default function LoginFormZod() {
             ))}
           </h1>
 
-          {/* IMAGE CARD */}
           <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl space-y-5">
-
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -79,23 +83,18 @@ export default function LoginFormZod() {
               "The capacity to learn is a gift; the ability to learn is a skill;
               the willingness to learn is a choice"
             </p>
-
           </div>
         </motion.div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="w-full lg:w-[42%] flex items-center justify-center px-6">
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-10 py-14 relative"
         >
-
-          {/* LOGO */}
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -112,19 +111,17 @@ export default function LoginFormZod() {
             </motion.div>
           </div>
 
-          {/* HEADER */}
-          <h2 className="text-2xl font-semibold text-center text-gray-900 mt-8">
-            Welcome back
-          </h2>
+          <div className="mt-10">
+            <h2 className="text-2xl font-semibold text-center text-gray-900">
+              Welcome back
+            </h2>
 
-          <p className="text-center text-gray-500 text-sm mt-1 mb-8">
-            Login to your Learnify account
-          </p>
+            <p className="text-center text-gray-500 text-sm mt-2 mb-8">
+              Login to your Learnify account
+            </p>
+          </div>
 
-          {/* FORM */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
-            {/* EMAIL */}
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Email Address
@@ -140,7 +137,6 @@ export default function LoginFormZod() {
               </p>
             </div>
 
-            {/* PASSWORD */}
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Password
@@ -156,7 +152,6 @@ export default function LoginFormZod() {
               </p>
             </div>
 
-            {/* OPTIONS */}
             <div className="flex items-center justify-between text-sm text-gray-600">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="accent-[#5B3DF5]" />
@@ -168,7 +163,6 @@ export default function LoginFormZod() {
               </button>
             </div>
 
-            {/* BUTTON */}
             <button
               type="submit"
               className="w-full bg-[#5B3DF5] hover:bg-[#4a2fe0] text-white py-3 rounded-xl font-medium transition"
@@ -177,20 +171,28 @@ export default function LoginFormZod() {
             </button>
           </form>
 
-          {/* SOCIAL */}
           <div className="flex gap-3 mt-6">
             <button className="flex-1 flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-              <Image src="/assets/images/google.png" width={18} height={18} alt="Google" />
+              <Image
+                src="/assets/images/google.png"
+                width={18}
+                height={18}
+                alt="Google"
+              />
               Google
             </button>
 
             <button className="flex-1 flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-              <Image src="/assets/images/facebook.png" width={18} height={18} alt="Facebook" />
+              <Image
+                src="/assets/images/facebook.png"
+                width={18}
+                height={18}
+                alt="Facebook"
+              />
               Facebook
             </button>
           </div>
 
-          {/* SIGNUP */}
           <p className="text-center text-sm text-gray-500 mt-6">
             Don&apos;t have an account?{" "}
             <Link
@@ -200,7 +202,6 @@ export default function LoginFormZod() {
               Sign up
             </Link>
           </p>
-
         </motion.div>
       </div>
     </div>
