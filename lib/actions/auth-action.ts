@@ -7,23 +7,11 @@ export async function registerUser(data: any) {
   try {
     const result = await register(data);
 
-    if (result.success) {
-      return {
-        success: true,
-        data: result.data,
-        message: result.message,
-      };
-    }
-
-    return {
-      success: false,
-      message: result.message,
-    };
+    return result.success
+      ? { success: true, data: result.data, message: result.message }
+      : { success: false, message: result.message };
   } catch (error: any) {
-    return {
-      success: false,
-      message: error.message,
-    };
+    return { success: false, message: error.message };
   }
 }
 
@@ -31,26 +19,18 @@ export async function loginUser(data: any) {
   try {
     const result = await login(data);
 
-    if (result.success) {
-      const token = result.data.token;
-
-      await setTokenCookie(token);
-
-      return {
-        success: true,
-        data: result.data,
-        message: result.message,
-      };
+    if (!result.success) {
+      return { success: false, message: result.message };
     }
 
+    await setTokenCookie(result.data.token);
+
     return {
-      success: false,
+      success: true,
+      data: result.data,
       message: result.message,
     };
   } catch (error: any) {
-    return {
-      success: false,
-      message: error.message,
-    };
+    return { success: false, message: error.message };
   }
 }

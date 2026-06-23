@@ -23,16 +23,16 @@ export default function LoginFormZod() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginType) => {
-    const result = await loginUser(data);
+const onSubmit = async (data: LoginType) => {
+  const result = await loginUser(data);
 
-    if (result.success) {
-      alert("Login Successful");
-      router.push("/dashboard");
-    } else {
-      alert(result.message);
-    }
-  };
+  if (result.success) {
+    localStorage.setItem("token", result.data.token);
+    router.replace("/dashboard");
+  } else {
+    alert(result.message);
+  }
+};;
 
   const words = ["Learn.", "Grow.", "Succeed."];
 
@@ -67,7 +67,6 @@ export default function LoginFormZod() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.6 }}
-              whileHover={{ scale: 1.03 }}
               className="overflow-hidden rounded-2xl"
             >
               <Image
