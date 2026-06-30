@@ -29,6 +29,8 @@ export const login = async (data: any) => {
       data
     );
 
+     console.log(response.data); 
+
     return {
       success: true,
       data: response.data,

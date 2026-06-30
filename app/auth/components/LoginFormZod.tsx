@@ -28,11 +28,16 @@ const onSubmit = async (data: LoginType) => {
 
   if (result.success) {
     localStorage.setItem("token", result.data.token);
-    router.replace("/dashboard");
+
+    if (result.data.user.role === "admin") {
+      router.replace("/admin/users");
+    } else {
+      router.replace("/dashboard");
+    }
   } else {
     alert(result.message);
   }
-};;
+};
 
   const words = ["Learn.", "Grow.", "Succeed."];
 
