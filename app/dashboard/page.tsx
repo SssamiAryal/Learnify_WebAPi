@@ -83,8 +83,11 @@ export default function Dashboard() {
             title="Lessons"
             onClick={() => router.push("/dashboard/lessons")}
           />
-          <SidebarItem icon={<BarChart3 size={18} />} title="Progress" />
-          <SidebarItem icon={<Bell size={18} />} title="Notifications" />
+          <SidebarItem
+            icon={<BarChart3 size={18} />}
+            title="Progress"
+            onClick={() => router.push("/dashboard/progress")}
+          />          <SidebarItem icon={<Bell size={18} />} title="Notifications" />
 
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mt-5 mb-2">Account</p>
           <SidebarItem
@@ -330,8 +333,8 @@ function SidebarItem({ icon, title, active = false, onClick }: any) {
     <button
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${active
-          ? "bg-violet-50 text-violet-700 font-semibold"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+        ? "bg-violet-50 text-violet-700 font-semibold"
+        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
         }`}
     >
       <span className={active ? "text-violet-600" : ""}>{icon}</span>

@@ -116,8 +116,11 @@ export default function LessonsPage() {
             onClick={() => router.push("/dashboard")}
           />
           <SidebarItem icon={<BookOpen size={18} />} title="Lessons" active />
-          <SidebarItem icon={<BarChart3 size={18} />} title="Progress" />
-          <SidebarItem icon={<Bell size={18} />} title="Notifications" />
+          <SidebarItem
+            icon={<BarChart3 size={18} />}
+            title="Progress"
+            onClick={() => router.push("/dashboard/progress")}
+          />          <SidebarItem icon={<Bell size={18} />} title="Notifications" />
 
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mt-5 mb-2">Account</p>
           <SidebarItem
@@ -202,11 +205,10 @@ export default function LessonsPage() {
               <button
                 key={lvl}
                 onClick={() => setLevelFilter(lvl)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-colors ${
-                  levelFilter === lvl
+                className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-colors ${levelFilter === lvl
                     ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm shadow-violet-200"
                     : "bg-white border border-slate-100 text-slate-500 hover:bg-slate-50"
-                }`}
+                  }`}
               >
                 {lvl === "all" ? "All Levels" : lvl}
               </button>
@@ -256,11 +258,10 @@ function SidebarItem({ icon, title, active = false, onClick }: any) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-        active
+      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${active
           ? "bg-violet-50 text-violet-700 font-semibold"
           : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-      }`}
+        }`}
     >
       <span className={active ? "text-violet-600" : ""}>{icon}</span>
       {title}
@@ -291,9 +292,8 @@ function LessonCard({ lesson }: any) {
         </div>
 
         <span
-          className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${
-            LEVEL_STYLES[lesson.level] || "bg-slate-100 text-slate-600"
-          }`}
+          className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${LEVEL_STYLES[lesson.level] || "bg-slate-100 text-slate-600"
+            }`}
         >
           {lesson.level}
         </span>

@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { getLessonById } from "@/lib/api/lesson";
-import { completeLesson } from "@/lib/api/progress";
+import {
+  completeLesson,
+  getMyProgress,
+} from "@/lib/api/progress";
 import {
     Home,
     BookOpen,
@@ -49,22 +52,36 @@ export default function LessonDetailsPage() {
     }, [authLoading, isAuthenticated, router]);
 
     useEffect(() => {
-        const fetchLesson = async () => {
-            try {
-                setLoading(true);
-                const data = await getLessonById(id as string);
-                setLesson(data?.data || data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const fetchLesson = async () => {
+    try {
+      setLoading(true);
 
-        if (id) {
-            fetchLesson();
-        }
-    }, [id]);
+      const lessonData = await getLessonById(id as string);
+      setLesson(lessonData?.data || lessonData);
+
+      const progressData = await getMyProgress();
+
+      const progressList = progressData?.data || [];
+
+      const isCompleted = progressList.some(
+        (item: any) =>
+          item.lessonId?._id === id ||
+          item.lessonId === id
+      );
+
+      setCompleted(isCompleted);
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (id) {
+    fetchLesson();
+  }
+}, [id]);
 
     const handleComplete = async () => {
         try {
@@ -140,8 +157,11 @@ export default function LessonDetailsPage() {
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Menu</p>
                     <SidebarItem icon={<Home size={18} />} title="Dashboard" onClick={() => router.push("/dashboard")} />
                     <SidebarItem icon={<BookOpen size={18} />} title="Lessons" active onClick={() => router.push("/dashboard/lessons")} />
-                    <SidebarItem icon={<BarChart3 size={18} />} title="Progress" />
-                    <SidebarItem icon={<Bell size={18} />} title="Notifications" />
+                    <SidebarItem
+                        icon={<BarChart3 size={18} />}
+                        title="Progress"
+                        onClick={() => router.push("/dashboard/progress")}
+                    />                    <SidebarItem icon={<Bell size={18} />} title="Notifications" />
 
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mt-5 mb-2">Account</p>
                     <SidebarItem icon={<User size={18} />} title="Profile" onClick={() => router.push("/dashboard/profile")} />
@@ -264,8 +284,8 @@ function SidebarItem({ icon, title, active = false, onClick }: any) {
         <button
             onClick={onClick}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${active
-                    ? "bg-violet-50 text-violet-700 font-semibold"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+                ? "bg-violet-50 text-violet-700 font-semibold"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
         >
             <span className={active ? "text-violet-600" : ""}>{icon}</span>
