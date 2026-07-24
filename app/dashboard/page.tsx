@@ -3,6 +3,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
+import { getAllLessons } from "@/lib/api/lesson";
+import { getMyProgress } from "@/lib/api/progress";
 import {
   Home,
   BookOpen,
@@ -26,6 +29,8 @@ import {
 export default function Dashboard() {
   const router = useRouter();
   const { user, isAuthenticated, loading } = useAuth();
+  const [totalLessons, setTotalLessons] = useState(0);
+  const [completedLessons, setCompletedLessons] = useState(0);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -37,6 +42,29 @@ export default function Dashboard() {
       router.replace("/auth/login");
     }
   }, [loading, isAuthenticated, router]);
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        const lessons = await getAllLessons();
+        const progress = await getMyProgress();
+
+        const lessonList = Array.isArray(lessons)
+          ? lessons
+          : lessons.data || [];
+
+        const progressList = Array.isArray(progress)
+          ? progress
+          : progress.data || [];
+
+        setTotalLessons(lessonList.length);
+        setCompletedLessons(progressList.length);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadDashboard();
+  }, []);
 
   if (loading) {
     return (
@@ -55,6 +83,12 @@ export default function Dashboard() {
     .join("")
     .toUpperCase()
     .slice(0, 2) || "U";
+  const progressPercentage =
+    totalLessons === 0
+      ? 0
+      : Math.round((completedLessons / totalLessons) * 100);
+
+  const remainingLessons = totalLessons - completedLessons;
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800">
@@ -162,16 +196,46 @@ export default function Dashboard() {
               <h1 className="text-3xl font-bold text-slate-900">
                 Hello, {user?.fullName?.split(" ")[0] || "there"} 👋
               </h1>
-              <p className="text-sm text-slate-400">Your journey is <span className="text-violet-600 font-semibold">65% complete</span> — keep going!</p>
+              <p className="text-sm text-slate-400">
+                Your journey is{" "}
+                <span className="text-violet-600 font-semibold">
+                  {progressPercentage}% complete
+                </span>{" "}
+                — keep going!
+              </p>
             </div>
           </div>
 
           {/* Stat pills */}
           <div className="grid grid-cols-4 gap-4 mb-8">
-            <StatCard label="Day Streak" value="12" icon={<Flame size={20} className="text-orange-500" />} bg="bg-orange-50" accent="text-orange-500" />
-            <StatCard label="Lessons Done" value="38" icon={<CheckCircle size={20} className="text-emerald-500" />} bg="bg-emerald-50" accent="text-emerald-500" />
-            <StatCard label="Minutes Today" value="25" icon={<Clock size={20} className="text-blue-500" />} bg="bg-blue-50" accent="text-blue-500" />
-            <StatCard label="XP Earned" value="1,240" icon={<TrendingUp size={20} className="text-violet-500" />} bg="bg-violet-50" accent="text-violet-500" />
+            <StatCard
+              label="Total Lessons"
+              value={totalLessons}
+              icon={<BookOpen size={20} className="text-violet-500" />}
+              bg="bg-violet-50"
+            />
+
+            <StatCard
+              label="Completed"
+              value={completedLessons}
+              icon={<CheckCircle size={20} className="text-emerald-500" />}
+              bg="bg-emerald-50"
+            />
+
+            <StatCard
+              label="Remaining"
+              value={remainingLessons}
+              icon={<Clock size={20} className="text-blue-500" />}
+              bg="bg-blue-50"
+            />
+
+            <StatCard
+              label="Progress"
+              value={`${progressPercentage}%`}
+              icon={<TrendingUp size={20} className="text-orange-500" />}
+              bg="bg-orange-50"
+            />
+            
           </div>
 
           <div className="grid grid-cols-12 gap-6">
@@ -192,23 +256,31 @@ export default function Dashboard() {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-violet-200 text-xs font-semibold uppercase tracking-wider mb-1">Continue where you left off</p>
-                    <h2 className="text-2xl font-bold leading-tight">Advanced Conversational French</h2>
-                    <p className="text-violet-200 text-sm mt-1">Unit 4 · Business Environments</p>
+                    <h2 className="text-2xl font-bold leading-tight">Continue Learning</h2>
+                    <p className="text-violet-200 text-sm mt-1">You have completed {completedLessons} of {totalLessons} lessons.</p>
 
                     <div className="mt-3 mb-4">
                       <div className="flex justify-between text-xs text-violet-200 mb-1">
                         <span>Unit progress</span>
-                        <span>68%</span>
+                        <span>{progressPercentage}%</span>
                       </div>
                       <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-                        <div className="h-full bg-white rounded-full w-[68%]" />
+                        <div
+                          className="h-full bg-white rounded-full transition-all"
+                          style={{ width: `${progressPercentage}%` }}
+                        />
                       </div>
                     </div>
 
                     <div className="flex gap-3">
-                      <button className="bg-white text-violet-700 px-5 py-2 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-colors flex items-center gap-2 shadow-sm">
-                        <Play size={14} /> Continue Lesson
+                      <button
+                        onClick={() => router.push("/dashboard/lessons")}
+                        className="bg-white text-violet-700 px-5 py-2 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-colors flex items-center gap-2 shadow-sm"
+                      >
+                        <Play size={14} />
+                        Continue Lesson
                       </button>
+
                       <button className="border border-white/30 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-white/10 transition-colors">
                         Review Notes
                       </button>
