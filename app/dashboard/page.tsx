@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { getAllLessons } from "@/lib/api/lesson";
 import { getMyProgress } from "@/lib/api/progress";
+import FloatingAIButton from "@/app/components/FloatingAIButton";
 import {
   Home,
   BookOpen,
@@ -386,6 +387,7 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+      <FloatingAIButton />
     </div>
   );
 }
