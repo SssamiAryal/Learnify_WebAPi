@@ -23,21 +23,21 @@ export default function LoginFormZod() {
     resolver: zodResolver(loginSchema),
   });
 
-const onSubmit = async (data: LoginType) => {
-  const result = await loginUser(data);
+  const onSubmit = async (data: LoginType) => {
+    const result = await loginUser(data);
 
-  if (result.success) {
-    localStorage.setItem("token", result.data.token);
+    if (result.success) {
+      localStorage.setItem("token", result.data.token);
 
-    if (result.data.user.role === "admin") {
-      router.replace("/admin/users");
+      if (result.data.user.role === "admin") {
+        router.replace("/admin/users");
+      } else {
+        router.replace("/dashboard");
+      }
     } else {
-      router.replace("/dashboard");
+      alert(result.message);
     }
-  } else {
-    alert(result.message);
-  }
-};
+  };
 
   const words = ["Learn.", "Grow.", "Succeed."];
 
@@ -162,7 +162,11 @@ const onSubmit = async (data: LoginType) => {
                 Remember me
               </label>
 
-              <button type="button" className="text-[#5B3DF5] hover:underline">
+              <button
+                type="button"
+                onClick={() => router.push("/auth/forgot-password")}
+                className="text-[#5B3DF5] hover:underline"
+              >
                 Forgot password?
               </button>
             </div>

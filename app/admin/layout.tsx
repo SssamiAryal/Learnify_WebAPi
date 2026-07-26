@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { Users, BookOpen, LogOut, Shield } from "lucide-react";
+import { Users, BookOpen, LogOut, Shield, HelpCircle } from "lucide-react";
 
 const NAV_ITEMS = [
     { label: "Users", href: "/admin/users", icon: Users },
     { label: "Lessons", href: "/admin/lessons", icon: BookOpen },
-    // add more here, e.g. { label: "Courses", href: "/admin/courses", icon: GraduationCap },
+    { label: "Quiz", href: "/admin/quiz", icon: HelpCircle },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

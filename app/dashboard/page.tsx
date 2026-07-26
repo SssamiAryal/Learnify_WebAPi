@@ -121,7 +121,11 @@ export default function Dashboard() {
             icon={<BarChart3 size={18} />}
             title="Progress"
             onClick={() => router.push("/dashboard/progress")}
-          />          <SidebarItem icon={<Bell size={18} />} title="Notifications" />
+          />          <SidebarItem
+  icon={<Bell size={18} />}
+  title="Notifications"
+  onClick={() => router.push("/dashboard/notifications")}
+/>
 
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mt-5 mb-2">Account</p>
           <SidebarItem

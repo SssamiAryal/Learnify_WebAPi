@@ -136,8 +136,11 @@ export default function ProfilePage() {
           <SidebarItem icon={<Home size={18} />} title="Dashboard" onClick={() => router.push("/dashboard")} />
           <SidebarItem icon={<BookOpen size={18} />} title="Lessons" />
           <SidebarItem icon={<BarChart3 size={18} />} title="Progress" />
-          <SidebarItem icon={<Bell size={18} />} title="Notifications" />
-
+          <SidebarItem
+            icon={<Bell size={18} />}
+            title="Notifications"
+            onClick={() => router.push("/dashboard/notifications")}
+          />
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mt-5 mb-2">Account</p>
           <SidebarItem icon={<User size={18} />} title="Profile" active />
           <SidebarItem icon={<Shield size={18} />} title="Security" />
@@ -187,7 +190,11 @@ export default function ProfilePage() {
                     {imageFile ? (
                       <img src={URL.createObjectURL(imageFile)} className="w-full h-full object-cover" />
                     ) : user?.profileImage ? (
-                      <img src={`http://localhost:5000/uploads/${user.profileImage}`} className="w-full h-full object-cover" />
+                      <img
+                        src={`http://localhost:8088/uploads/${user.profileImage}`}
+                        className="w-full h-full object-cover"
+                        alt="Profile"
+                      />
                     ) : (
                       <span className="text-2xl font-bold text-white">{initials}</span>
                     )}
@@ -202,11 +209,10 @@ export default function ProfilePage() {
 
                 <button
                   onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm ${
-                    isEditing
-                      ? "bg-emerald-500 hover:bg-emerald-600 text-white"
-                      : "bg-violet-600 hover:bg-violet-700 text-white"
-                  }`}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm ${isEditing
+                    ? "bg-emerald-500 hover:bg-emerald-600 text-white"
+                    : "bg-violet-600 hover:bg-violet-700 text-white"
+                    }`}
                 >
                   {isEditing ? <Save size={16} /> : <Edit3 size={16} />}
                   {isEditing ? "Save changes" : "Edit profile"}
@@ -396,11 +402,10 @@ function SidebarItem({ icon, title, active = false, onClick }: any) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-        active
-          ? "bg-violet-50 text-violet-700 font-semibold"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-      }`}
+      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${active
+        ? "bg-violet-50 text-violet-700 font-semibold"
+        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+        }`}
     >
       <span className={active ? "text-violet-600" : ""}>{icon}</span>
       {title}

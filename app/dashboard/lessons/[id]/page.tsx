@@ -5,8 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { getLessonById } from "@/lib/api/lesson";
 import {
-  completeLesson,
-  getMyProgress,
+    getQuizByLesson,
+    submitQuiz,
+} from "@/lib/api/admin/quiz";
+import {
+    completeLesson,
+    getMyProgress,
 } from "@/lib/api/progress";
 import {
     Home,
@@ -40,6 +44,10 @@ export default function LessonDetailsPage() {
     const [completed, setCompleted] = useState(false);
     const [completing, setCompleting] = useState(false);
 
+    const [quizzes, setQuizzes] = useState<any[]>([]);
+    const [answers, setAnswers] = useState<{ [key: string]: string }>({});
+    const [showQuiz, setShowQuiz] = useState(false);
+    const [result, setResult] = useState<any>(null);
     const handleLogout = () => {
         localStorage.removeItem("token");
         router.push("/auth/login");
@@ -52,36 +60,39 @@ export default function LessonDetailsPage() {
     }, [authLoading, isAuthenticated, router]);
 
     useEffect(() => {
-  const fetchLesson = async () => {
-    try {
-      setLoading(true);
+        const fetchLesson = async () => {
+            try {
+                setLoading(true);
 
-      const lessonData = await getLessonById(id as string);
-      setLesson(lessonData?.data || lessonData);
+                const lessonData = await getLessonById(id as string);
+                setLesson(lessonData?.data || lessonData);
 
-      const progressData = await getMyProgress();
+                const quizData = await getQuizByLesson(id as string);
+                setQuizzes(quizData?.data || []);
 
-      const progressList = progressData?.data || [];
+                const progressData = await getMyProgress();
 
-      const isCompleted = progressList.some(
-        (item: any) =>
-          item.lessonId?._id === id ||
-          item.lessonId === id
-      );
+                const progressList = progressData?.data || [];
 
-      setCompleted(isCompleted);
+                const isCompleted = progressList.some(
+                    (item: any) =>
+                        item.lessonId?._id === id ||
+                        item.lessonId === id
+                );
 
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+                setCompleted(isCompleted);
 
-  if (id) {
-    fetchLesson();
-  }
-}, [id]);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchLesson();
+        }
+    }, [id]);
 
     const handleComplete = async () => {
         try {
@@ -161,7 +172,12 @@ export default function LessonDetailsPage() {
                         icon={<BarChart3 size={18} />}
                         title="Progress"
                         onClick={() => router.push("/dashboard/progress")}
-                    />                    <SidebarItem icon={<Bell size={18} />} title="Notifications" />
+                    />
+                    <SidebarItem
+                        icon={<Bell size={18} />}
+                        title="Notifications"
+                        onClick={() => router.push("/dashboard/notifications")}
+                    />
 
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mt-5 mb-2">Account</p>
                     <SidebarItem icon={<User size={18} />} title="Profile" onClick={() => router.push("/dashboard/profile")} />
@@ -256,12 +272,20 @@ export default function LessonDetailsPage() {
                             <Clock size={15} />
                             Take your time — you can revisit this lesson anytime
                         </div>
-
                         {completed ? (
-                            <span className="flex items-center gap-2 text-emerald-600 font-semibold text-sm bg-emerald-50 px-5 py-3 rounded-xl">
-                                <CheckCircle2 size={18} />
-                                Lesson Completed
-                            </span>
+                            quizzes.length > 0 ? (
+                                <button
+                                    onClick={() => setShowQuiz(true)}
+                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold"
+                                >
+                                    Take Quiz
+                                </button>
+                            ) : (
+                                <span className="flex items-center gap-2 text-emerald-600 font-semibold text-sm bg-emerald-50 px-5 py-3 rounded-xl">
+                                    <CheckCircle2 size={18} />
+                                    Lesson Completed
+                                </span>
+                            )
                         ) : (
                             <button
                                 onClick={handleComplete}
@@ -275,6 +299,108 @@ export default function LessonDetailsPage() {
                     </div>
                 </div>
             </main>
+            {showQuiz && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-xl">
+
+                        <h2 className="text-2xl font-bold mb-6">
+                            Lesson Quiz
+                        </h2>
+
+                        {quizzes.map((quiz: any) => (
+                            <div key={quiz._id} className="mb-6">
+                                <p className="font-semibold mb-3">
+                                    {quiz.question}
+                                </p>
+
+                                {quiz.options.map((option: string) => (
+                                    <label
+                                        key={option}
+                                        className="flex items-center gap-2 mb-2"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name={quiz._id}
+                                            value={option}
+                                            checked={answers[quiz._id] === option}
+                                            onChange={() =>
+                                                setAnswers({
+                                                    ...answers,
+                                                    [quiz._id]: option,
+                                                })
+                                            }
+                                        />
+
+                                        {option}
+                                    </label>
+                                ))}
+                            </div>
+                        ))}
+
+                        {result ? (
+                            <div className="text-center">
+
+                                <h2 className="text-3xl font-bold text-green-600 mb-3">
+                                    🎉 Quiz Completed!
+                                </h2>
+
+                                <p className="text-lg mb-2">
+                                    Your Score
+                                </p>
+
+                                <p className="text-5xl font-bold text-violet-600 mb-4">
+                                    {result.score} / {result.totalQuestions}
+                                </p>
+
+                                <p className="text-gray-600 mb-6">
+                                    Percentage:{" "}
+                                    {Math.round((result.score / result.totalQuestions) * 100)}%
+                                </p>
+
+                                <button
+                                    onClick={() => {
+                                        setShowQuiz(false);
+                                        setResult(null);
+                                    }}
+                                    className="bg-violet-600 text-white px-6 py-3 rounded-xl"
+                                >
+                                    Close
+                                </button>
+
+                            </div>
+                        ) : (
+                            <div className="flex gap-3">
+
+                                <button
+                                    onClick={() => setShowQuiz(false)}
+                                    className="px-4 py-2 bg-gray-300 rounded-lg"
+                                >
+                                    Close
+                                </button>
+
+                                <button
+                                    onClick={async () => {
+                                        const response = await submitQuiz({
+                                            lessonId: id,
+                                            answers: Object.entries(answers).map(([quizId, answer]) => ({
+                                                quizId,
+                                                answer,
+                                            })),
+                                        });
+
+                                        setResult(response);
+                                    }}
+                                    className="px-4 py-2 bg-violet-600 text-white rounded-lg"
+                                >
+                                    Submit Quiz
+                                </button>
+
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
